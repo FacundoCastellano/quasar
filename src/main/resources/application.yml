@@ -1,0 +1,26 @@
+quasar:
+  satellites:
+    -
+      name: Kenobi
+      position:
+        x: -500
+        y: -200
+    -
+      name: Skywalker
+      position:
+        x: 100
+        y: -100
+    -
+      name: Sato
+      position:
+        x: 500
+        y: 100
+
+server:
+  error:
+    include-message: always
+
+spring:
+  redis:
+    port: 6379
+    host: localhost
