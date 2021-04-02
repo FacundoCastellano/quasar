@@ -3,6 +3,7 @@ package com.fcastellano.quasar.controller;
 import com.fcastellano.quasar.dto.CommunicationDTO;
 import com.fcastellano.quasar.dto.SpaceShipInfoDTO;
 import com.fcastellano.quasar.exception.CommunicationException;
+import com.fcastellano.quasar.exception.LocationException;
 import com.fcastellano.quasar.exception.MessageException;
 import com.fcastellano.quasar.exception.SatelliteException;
 import com.fcastellano.quasar.model.Communication;
@@ -38,7 +39,7 @@ public class CommunicationController {
 
     @PostMapping("/topSecret")
     public ResponseEntity<SpaceShipInfoDTO> topSecret(@RequestBody CommunicationDTO communicationList)
-            throws MessageException, SatelliteException {
+            throws MessageException, SatelliteException, LocationException {
 
         for (Communication communication : communicationList.getCommunications()) {
             satelliteService.validateExistence(communication.getName());
