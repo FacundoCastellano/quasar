@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface LocationService {
 
-    Position getLocation(List<Double> distances) throws LocationException;
+    Position getLocation(List<Double> distances, List<Position> positions) throws LocationException;
 }

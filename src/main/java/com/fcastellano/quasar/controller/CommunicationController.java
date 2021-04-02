@@ -1,6 +1,7 @@
 package com.fcastellano.quasar.controller;
 
 import com.fcastellano.quasar.dto.CommunicationDTO;
+import com.fcastellano.quasar.dto.InfoCommunications;
 import com.fcastellano.quasar.dto.SpaceShipInfoDTO;
 import com.fcastellano.quasar.exception.CommunicationException;
 import com.fcastellano.quasar.exception.LocationException;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 public class CommunicationController {
@@ -41,12 +41,10 @@ public class CommunicationController {
     public ResponseEntity<SpaceShipInfoDTO> topSecret(@RequestBody CommunicationDTO communicationList)
             throws MessageException, SatelliteException, LocationException {
 
-        for (Communication communication : communicationList.getCommunications()) {
-            satelliteService.validateExistence(communication.getName());
-        }
+        InfoCommunications infoMapped = mapInfoCommunications(communicationList.getCommunications());
 
-        String messageComplete = messageService.getMessage(mapMessages(communicationList.getCommunications()));
-        Position position = locationService.getLocation(mapDistances(communicationList.getCommunications()));
+        String messageComplete = messageService.getMessage(infoMapped.getMessages());
+        Position position = locationService.getLocation(infoMapped.getDistances(), infoMapped.getPositions());
 
         return ResponseEntity.ok(new SpaceShipInfoDTO(position, messageComplete));
     }
@@ -73,8 +71,9 @@ public class CommunicationController {
         Position position;
 
         try {
-            messageComplete = messageService.getMessage(mapMessages(communicationList));
-            position = locationService.getLocation(mapDistances(communicationList));
+            InfoCommunications infoMapped = mapInfoCommunications(communicationList);
+            messageComplete = messageService.getMessage(infoMapped.getMessages());
+            position = locationService.getLocation(infoMapped.getDistances(), infoMapped.getPositions());
         } catch (Exception e) {
             throw new CommunicationException("Need more info");
         }
@@ -84,15 +83,13 @@ public class CommunicationController {
         return ResponseEntity.ok(new SpaceShipInfoDTO(position, messageComplete));
     }
 
-    private List<Double> mapDistances(List<Communication> communicationList) {
-        return communicationList.stream()
-                .map(Communication::getDistance)
-                .collect(Collectors.toList());
-    }
-
-    private List<String[]> mapMessages(List<Communication> communicationList) {
-        return communicationList.stream()
-                .map(Communication::getMessage)
-                .collect(Collectors.toList());
+    private InfoCommunications mapInfoCommunications(List<Communication> communicationList) throws SatelliteException {
+        InfoCommunications infoMapped = new InfoCommunications();
+        for (Communication communication : communicationList) {
+            infoMapped.getPositions().add(satelliteService.getPosition(communication.getName()));
+            infoMapped.getDistances().add(communication.getDistance());
+            infoMapped.getMessages().add(communication.getMessage());
+        }
+        return infoMapped;
     }
 }

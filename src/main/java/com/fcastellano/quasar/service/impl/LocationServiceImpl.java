@@ -1,6 +1,5 @@
 package com.fcastellano.quasar.service.impl;
 
-import com.fcastellano.quasar.config.SatelliteConfiguration;
 import com.fcastellano.quasar.exception.LocationException;
 import com.fcastellano.quasar.model.Position;
 import com.fcastellano.quasar.service.LocationService;
@@ -14,17 +13,11 @@ import java.util.List;
 @Service
 public class LocationServiceImpl implements LocationService {
 
-    private final SatelliteConfiguration satelliteConfiguration;
-
-    public LocationServiceImpl(SatelliteConfiguration satelliteConfiguration) {
-        this.satelliteConfiguration = satelliteConfiguration;
-    }
-
     @Override
-    public Position getLocation(List<Double> distances) throws LocationException {
+    public Position getLocation(List<Double> distances, List<Position> positions) throws LocationException {
 
-        double[][] positionsArray = satelliteConfiguration.getSatellites().stream()
-                .map(satellite -> satellite.getPosition().getArray())
+        double[][] positionsArray = positions.stream()
+                .map(Position::getArray)
                 .toArray(double[][]::new);
         double[] distancesArray = distances.stream().mapToDouble(value -> value).toArray();
 

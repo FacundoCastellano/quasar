@@ -2,6 +2,8 @@ package com.fcastellano.quasar.service.impl;
 
 import com.fcastellano.quasar.config.SatelliteConfiguration;
 import com.fcastellano.quasar.exception.SatelliteException;
+import com.fcastellano.quasar.model.Position;
+import com.fcastellano.quasar.model.Satellite;
 import com.fcastellano.quasar.service.SatelliteService;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +18,18 @@ public class SatelliteServiceImpl implements SatelliteService {
 
     @Override
     public void validateExistence(String satelliteName) throws SatelliteException {
-        if(!satelliteConfiguration.isValidName(satelliteName))
-            throw new SatelliteException("Name is invalid");
+        satelliteConfiguration.getSatellites().stream()
+                .filter(satellite -> satellite.getName().equalsIgnoreCase(satelliteName))
+                .findFirst()
+                .orElseThrow(() ->new SatelliteException("satellite not found"));
+    }
+
+    @Override
+    public Position getPosition(String name) throws SatelliteException {
+        return satelliteConfiguration.getSatellites().stream()
+                .filter(satellite -> satellite.getName().equalsIgnoreCase(name))
+                .findFirst()
+                .map(Satellite::getPosition)
+                .orElseThrow(() ->new SatelliteException("satellite not found"));
     }
 }

@@ -19,10 +19,4 @@ public class SatelliteConfiguration {
     public void setSatellites(List<Satellite> satellites) {
         this.satellites = satellites;
     }
-
-    public boolean isValidName(String name) {
-        return satellites.stream()
-                .map(Satellite::getName)
-                .anyMatch(s -> s.equals(name));
-    }
 }
