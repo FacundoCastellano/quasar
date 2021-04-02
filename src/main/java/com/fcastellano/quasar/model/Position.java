@@ -1,9 +1,14 @@
 package com.fcastellano.quasar.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class Position {
 
     private double x;
     private double y;
+
+    public Position() {
+    }
 
     public Position(double x, double y) {
         this.x = x;
@@ -26,6 +31,7 @@ public class Position {
         this.y = y;
     }
 
+    @JsonIgnore
     public double[] getArray(){
         return new double[]{x, y};
     }
