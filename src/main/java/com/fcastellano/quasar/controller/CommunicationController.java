@@ -10,6 +10,7 @@ import com.fcastellano.quasar.model.Position;
 import com.fcastellano.quasar.service.CommunicationService;
 import com.fcastellano.quasar.service.LocationService;
 import com.fcastellano.quasar.service.MessageService;
+import com.fcastellano.quasar.service.SatelliteService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,23 +24,28 @@ public class CommunicationController {
     private final LocationService locationService;
     private final MessageService messageService;
     private final CommunicationService communicationService;
+    private final SatelliteService satelliteService;
 
     public CommunicationController(LocationService locationService,
                                    MessageService messageService,
-                                   CommunicationService communicationService) {
+                                   CommunicationService communicationService,
+                                   SatelliteService satelliteService) {
         this.locationService = locationService;
         this.messageService = messageService;
         this.communicationService = communicationService;
+        this.satelliteService = satelliteService;
     }
 
     @PostMapping("/topSecret")
-    public ResponseEntity<SpaceShipInfoDTO> topSecret(@RequestBody CommunicationDTO communicationList) throws MessageException {
+    public ResponseEntity<SpaceShipInfoDTO> topSecret(@RequestBody CommunicationDTO communicationList)
+            throws MessageException, SatelliteException {
 
-        List<String[]> messages = mapMessages(communicationList.getSatellites());
-        List<Double> distances = mapDistances(communicationList.getSatellites());
+        for (Communication communication : communicationList.getCommunications()) {
+            satelliteService.validateExistence(communication.getName());
+        }
 
-        String messageComplete = messageService.getMessage(messages);
-        Position position = locationService.getLocation(distances);
+        String messageComplete = messageService.getMessage(mapMessages(communicationList.getCommunications()));
+        Position position = locationService.getLocation(mapDistances(communicationList.getCommunications()));
 
         return ResponseEntity.ok(new SpaceShipInfoDTO(position, messageComplete));
     }
@@ -48,6 +54,8 @@ public class CommunicationController {
     public ResponseEntity<?> topSecretSplit(@PathVariable("satellite_name") String satelliteName,
                                             @RequestBody Communication communication,
                                             HttpServletRequest httpServletRequest) throws SatelliteException {
+
+        satelliteService.validateExistence(satelliteName);
 
         communication.setName(satelliteName);
         communicationService.addCommunication(httpServletRequest.getRemoteAddr(), communication);
@@ -60,15 +68,12 @@ public class CommunicationController {
 
         List<Communication> communicationList = communicationService.getCommunications(httpServletRequest.getRemoteAddr());
 
-        List<String[]> messages = mapMessages(communicationList);
-        List<Double> distances = mapDistances(communicationList);
-
         String messageComplete;
         Position position;
 
         try {
-            messageComplete = messageService.getMessage(messages);
-            position = locationService.getLocation(distances);
+            messageComplete = messageService.getMessage(mapMessages(communicationList));
+            position = locationService.getLocation(mapDistances(communicationList));
         } catch (Exception e) {
             throw new CommunicationException("Need more info");
         }

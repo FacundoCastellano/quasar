@@ -1,8 +1,6 @@
 package com.fcastellano.quasar.service.impl;
 
-import com.fcastellano.quasar.config.SatelliteConfiguration;
 import com.fcastellano.quasar.exception.CommunicationException;
-import com.fcastellano.quasar.exception.SatelliteException;
 import com.fcastellano.quasar.model.Communication;
 import com.fcastellano.quasar.repository.CommunicationRepository;
 import com.fcastellano.quasar.service.CommunicationService;
@@ -14,20 +12,13 @@ import java.util.List;
 public class CommunicationServiceImpl implements CommunicationService {
 
     private final CommunicationRepository communicationRepository;
-    private final SatelliteConfiguration satelliteConfiguration;
 
-    public CommunicationServiceImpl(CommunicationRepository communicationRepository,
-                                    SatelliteConfiguration satelliteConfiguration) {
+    public CommunicationServiceImpl(CommunicationRepository communicationRepository) {
         this.communicationRepository = communicationRepository;
-        this.satelliteConfiguration = satelliteConfiguration;
     }
 
     @Override
-    public void addCommunication(String remoteAddr, Communication communication) throws SatelliteException {
-
-        if(!satelliteConfiguration.isValidName(communication.getName()))
-            throw new SatelliteException("Name is invalid");
-
+    public void addCommunication(String remoteAddr, Communication communication) {
         communicationRepository.add(remoteAddr, communication);
     }
 
