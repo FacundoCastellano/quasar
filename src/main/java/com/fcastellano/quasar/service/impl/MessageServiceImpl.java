@@ -2,6 +2,8 @@ package com.fcastellano.quasar.service.impl;
 
 import com.fcastellano.quasar.exception.MessageException;
 import com.fcastellano.quasar.service.MessageService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -12,15 +14,22 @@ import java.util.stream.IntStream;
 @Service
 public class MessageServiceImpl implements MessageService {
 
+    public static final String INCOMPLETE_MESSAGE = "incomplete message";
+    private final Logger logger = LoggerFactory.getLogger(MessageServiceImpl.class);
+
     @Override
     public String getMessage(List<String[]> messages) throws MessageException {
 
+        logger.debug("Completing message");
         String[] messageReduced = messages.stream()
                 .sorted(Comparator.comparingInt(strings -> strings.length))
                 .reduce(this::completeMessage)
                 .orElse(new String[]{""});
 
-        if (Arrays.asList(messageReduced).contains("")) throw new MessageException("mensaje incompleto");
+        if (Arrays.asList(messageReduced).contains("")) {
+            logger.error(INCOMPLETE_MESSAGE + ". Message: " + Arrays.toString(messageReduced));
+            throw new MessageException(INCOMPLETE_MESSAGE);
+        }
 
         return String.join(" ", messageReduced);
     }
