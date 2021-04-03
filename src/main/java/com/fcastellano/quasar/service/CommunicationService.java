@@ -1,14 +1,13 @@
 package com.fcastellano.quasar.service;
 
 import com.fcastellano.quasar.exception.CommunicationException;
-import com.fcastellano.quasar.exception.SatelliteException;
 import com.fcastellano.quasar.model.Communication;
 
 import java.util.List;
 
 public interface CommunicationService {
 
-    void addCommunication(String remoteAddr, Communication communication) throws SatelliteException;
+    void addCommunication(String remoteAddr, Communication communication);
 
     List<Communication> getCommunications(String remoteAddr) throws CommunicationException;
 

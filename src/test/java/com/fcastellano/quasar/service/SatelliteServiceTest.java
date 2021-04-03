@@ -27,7 +27,7 @@ public class SatelliteServiceTest {
     }
 
     @Test
-    public void validateExistenceWithInvalidSatellite() {
+    public void validateExistenceWithInvalidSatelliteShouldThrowException() {
         assertThrows(SatelliteException.class, () -> satelliteService.validateExistence(INVALID_SATELLITE));
     }
 
@@ -39,7 +39,7 @@ public class SatelliteServiceTest {
     }
 
     @Test
-    public void getPositionWithInvalidSatellite() {
+    public void getPositionWithInvalidSatelliteShouldThrowException() {
         assertThrows(SatelliteException.class, () -> satelliteService.getPosition(INVALID_SATELLITE));
     }
 }

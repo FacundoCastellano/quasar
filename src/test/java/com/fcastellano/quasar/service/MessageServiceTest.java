@@ -43,12 +43,12 @@ public class MessageServiceTest {
     }
 
     @Test
-    public void getMessageWithEmptyList() {
+    public void getMessageWithEmptyListShouldThrowException() {
         assertThrows(MessageException.class, () -> messageService.getMessage(messages));
     }
 
     @Test
-    public void getMessageWithMissingWord() {
+    public void getMessageWithMissingWordShouldThrowException() {
         messages.add(new String[]{"", "", "", "mensaje", ""});
         messages.add(new String[]{"este", "", "un", "", ""});
         messages.add(new String[]{"", "", "", "", "secreto"});
