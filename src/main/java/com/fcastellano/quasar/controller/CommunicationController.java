@@ -37,7 +37,7 @@ public class CommunicationController {
         this.satelliteService = satelliteService;
     }
 
-    @PostMapping("/topSecret")
+    @PostMapping("/topsecret")
     public ResponseEntity<SpaceShipInfoDTO> topSecret(@RequestBody CommunicationDTO communicationList)
             throws MessageException, SatelliteException, LocationException {
 
