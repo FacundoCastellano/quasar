@@ -1,0 +1,7 @@
+quasar:
+  satellites:
+    -
+      name: Kenobi
+      position:
+        x: -500
+        y: -20
