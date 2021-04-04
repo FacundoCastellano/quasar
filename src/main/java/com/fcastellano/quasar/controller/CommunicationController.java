@@ -13,6 +13,7 @@ import com.fcastellano.quasar.service.CommunicationService;
 import com.fcastellano.quasar.service.LocationService;
 import com.fcastellano.quasar.service.MessageService;
 import com.fcastellano.quasar.service.SatelliteService;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -41,6 +42,7 @@ public class CommunicationController {
         this.satelliteService = satelliteService;
     }
 
+    @ApiOperation(value = "Returns the location of the ship and the complete message from the distances to the satellites and their received messages.")
     @PostMapping("/topsecret")
     public ResponseEntity<SpaceShipInfoDTO> topSecret(@RequestBody CommunicationDTO communicationList)
             throws MessageException, SatelliteException, LocationException {
@@ -55,6 +57,7 @@ public class CommunicationController {
         return ResponseEntity.ok(new SpaceShipInfoDTO(position, messageComplete));
     }
 
+    @ApiOperation(value = "Receives the distance between the ship and the satellite, together with the message sent.")
     @PostMapping("/topsecret_split/{satellite_name}")
     public ResponseEntity<?> topSecretSplit(@PathVariable("satellite_name") String satelliteName,
                                             @RequestBody Communication communication,
@@ -70,6 +73,7 @@ public class CommunicationController {
         return ResponseEntity.ok().build();
     }
 
+    @ApiOperation(value = "Get ship position and complete message.")
     @GetMapping("/topsecret_split")
     public ResponseEntity<SpaceShipInfoDTO> topSecretSplit(HttpServletRequest httpServletRequest) throws CommunicationException {
 
